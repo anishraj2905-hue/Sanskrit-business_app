@@ -1,0 +1,11 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Sanskrit&amp;Businesshub",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Sanskritapp",
+  "start_url": "/",
+  "theme_color": "#ffffff"
+}
