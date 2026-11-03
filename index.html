@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanskrit Masterclass & Smart Business Billing System</title>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- HTML2PDF CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- PWA Web Manifest (App Installation Support) -->
+  <link rel="manifest" href="data:application/manifest+json,{
+    %22name%22: %22Sanskrit & Business Hub%22,
+    %22short_name%22: %22SanskritApp%22,
+    %22start_url%22: %22.%22,
+    %22display%22: %22standalone%22,
+    %22background_color%22: %22#f8f9fa%22,
+    %22theme_color%22: %22#6c5ce7%22
+  }">
+
+  <style>
+    :root {
+      --primary: #6c5ce7;
+      --secondary: #a29bfe;
+      --accent: #fd79a8;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #2d3436;
+      --success: #00b894;
+      --danger: #d63031;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 40px; }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary), #4834d4);
+      color: white;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+    header h1 { font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    
+    .nav-icons { display: flex; gap: 10px; align-items: center; }
+    .icon-btn { background: none; border: none; color: white; font-size: 18px; cursor: pointer; }
+    
+    /* Prominent APK Download Button in Header */
+    .btn-apk-top {
+      background: #00b894;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      animation: pulse 2s infinite;
+    }
+    .btn-apk-top:hover { background: #00997b; }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+
+    #offlineBadge {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #ff7675;
+      color: white;
+      display: none;
+      margin-left: 5px;
+    }
+
+    /* 3-Dot Dropdown */
+    .dropdown-menu {
+      position: absolute;
+      top: 55px;
+      right: 15px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      width: 230px;
+      display: none;
+      flex-direction: column;
+      z-index: 200;
+      overflow: hidden;
+    }
+    .dropdown-menu.active { display: flex; }
+    .dropdown-item {
+      padding: 12px 16px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      border-bottom: 1px solid #f1f1f1;
+      text-decoration: none;
+    }
+    .dropdown-item:hover { background: #f8f9fa; color: var(--primary); }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      margin-bottom: 15px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 14px;
+      text-align: center;
+      border: none;
+      background: none;
+      font-weight: 600;
+      font-size: 15px;
+      color: #636e72;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: 0.3s;
+    }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 0 15px; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+    }
+    .card-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .card-title { font-size: 17px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+
+    /* Buttons */
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .btn:hover { opacity: 0.92; }
+    .btn-success { background: var(--success); }
+    .btn-dark { background: #2d3436; }
+    .btn-block { width: 100%; }
+
+    .btn-reset {
+      background: #ffeaa7;
+      color: #d63031;
+      border: 1px solid #fdcb6e;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Day Grid */
+    .day-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+      gap: 8px;
+      max-height: 170px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .day-chip {
+      background: #f1f2f6;
+      border: 1px solid #dfe4ea;
+      padding: 8px 4px;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .day-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+    /* Forms & Calculations */
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 13px; }
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .form-group { flex: 1; }
+
+    .calc-box {
+      background: #eef2f7;
+      border-left: 4px solid var(--primary);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .calc-box h4 { font-size: 13px; margin-bottom: 8px; color: #2c3e50; }
+
+    .invoice-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .invoice-table th, .invoice-table td { padding: 8px; border: 1px solid #eee; text-align: left; font-size: 13px; }
+    .invoice-table th { background: #f8f9fa; }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 300;
+      padding: 15px;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 550px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 22px;
+      position: relative;
+    }
+    .close-modal {
+      position: absolute;
+      top: 15px; right: 15px;
+      font-size: 22px; cursor: pointer; color: #888;
+    }
+
+    .quiz-opt {
+      display: block; width: 100%; text-align: left;
+      padding: 10px; margin: 6px 0; border: 1px solid #ddd;
+      border-radius: 6px; background: #fff; cursor: pointer;
+    }
+    .quiz-opt.correct { background: #d4edda; border-color: #28a745; }
+    .quiz-opt.wrong { background: #f8d7da; border-color: #dc3545; }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header>
+    <h1>
+      <i class="fa-solid fa-graduation-cap"></i> Sanskrit & Business
+      <span id="offlineBadge">Offline</span>
+    </h1>
+    <div class="nav-icons">
+      <!-- APK Download Button -->
+      <button class="btn-apk-top" onclick="openModal('apkModal')">
+        <i class="fa-brands fa-android"></i> Download APK
+      </button>
+      <button class="icon-btn" onclick="openModal('settingsModal')"><i class="fa-solid fa-gear"></i></button>
+      <button class="icon-btn" onclick="toggleMenu()"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+    </div>
+  </header>
+
+  <!-- 3-Dot Menu -->
+  <div class="dropdown-menu" id="dropdownMenu">
+    <div class="dropdown-item" onclick="openModal('apkModal')"><i class="fa-brands fa-android" style="color:#00b894;"></i> Download Android APK</div>
+    <div class="dropdown-item" onclick="openModal('notesModal')"><i class="fa-solid fa-book"></i> Course Notes</div>
+    <div class="dropdown-item" onclick="openModal('videoModal')"><i class="fa-solid fa-video"></i> AI Video Lectures</div>
+    <div class="dropdown-item" onclick="openModal('storyModal')"><i class="fa-solid fa-book-open"></i> Storybook (Skt/Hindi)</div>
+    <div class="dropdown-item" onclick="openModal('pdfModal')"><i class="fa-solid fa-file-pdf"></i> PDF Library</div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('sanskritTab', this)"><i class="fa-solid fa-om"></i> 30-Day Sanskrit</button>
+    <button class="tab-btn" onclick="switchTab('businessTab', this)"><i class="fa-solid fa-cash-register"></i> Business & Billing</button>
+  </div>
+
+  <div class="container">
+    <!-- TAB 1: SANSKRIT LEARNING -->
+    <div id="sanskritTab" class="tab-content active">
+      <div class="card">
+        <div class="card-header-flex">
+          <div class="card-title"><i class="fa-solid fa-calendar-days"></i> Course Progress (30 Days)</div>
+          <button class="btn-reset" onclick="resetCourseProgress()"><i class="fa-solid fa-rotate-right"></i> Reset</button>
+        </div>
+        <div class="day-grid" id="dayGrid"></div>
+      </div>
+
+      <div class="card" id="lessonCard">
+        <div class="card-title" id="lessonTitle">Day 1: Swagat & Basic Pronouns</div>
+        <div id="lessonBody" style="line-height: 1.6; margin: 15px 0;"></div>
+        <button class="btn btn-block" onclick="startQuiz()"><i class="fa-solid fa-pen-to-square"></i> Take Day Quiz / Test</button>
+      </div>
+
+      <div class="card" id="quizCard" style="display: none;">
+        <div class="card-title"><i class="fa-solid fa-circle-question"></i> Daily Assessment</div>
+        <p id="quizQuestion" style="font-weight:600; margin:10px 0;"></p>
+        <div id="quizOptions"></div>
+        <div id="quizResult" style="margin-top: 10px; font-weight: bold;"></div>
+        <button class="btn btn-success btn-block" id="nextDayBtn" style="display:none; margin-top:15px;" onclick="nextDay()">Next Lesson ➔</button>
+      </div>
+    </div>
+
+    <!-- TAB 2: BUSINESS & BILLING -->
+    <div id="businessTab" class="tab-content">
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-calculator"></i> Smart Weight & Price Calculator</div>
+        
+        <div class="calc-box">
+          <h4>Case 1: Rupee ➔ Gram (₹10 mein kitna Gram?)</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>1 kg Rate (₹)</label>
+              <input type="number" id="calcRate1" class="form-control" value="100" oninput="calcRupeeToGram()">
+            </div>
+            <div class="form-group">
+              <label>Budget Amount (₹)</label>
+              <input type="number" id="calcBudget" class="form-control" value="10" oninput="calcRupeeToGram()">
+            </div>
+          </div>
+          <p>Weight: <b id="resGram" style="color:var(--primary)">100 Grams</b></p>
+          <button class="btn" style="margin-top:8px; padding:6px 12px; font-size:12px;" onclick="addCalcToBill(1)">+ Add to Bill</button>
+        </div>
+
+        <div class="calc-box">
+          <h4>Case 2: Gram ➔ Rupee (250g ka kitna ₹?)</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>1 kg Rate (₹)</label>
+              <input type="number" id="calcRate2" class="form-control" value="100" oninput="calcGramToRupee()">
+            </div>
+            <div class="form-group">
+              <label>Required Weight (g)</label>
+              <input type="number" id="calcGrams" class="form-control" value="250" oninput="calcGramToRupee()">
+            </div>
+          </div>
+          <p>Price: <b id="resRupee" style="color:var(--success)">₹ 25.00</b></p>
+          <button class="btn" style="margin-top:8px; padding:6px 12px; font-size:12px;" onclick="addCalcToBill(2)">+ Add to Bill</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-cart-plus"></i> Add Item to Invoice</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Item Name</label>
+            <input type="text" id="prodName" class="form-control" placeholder="Sugar / Rice">
+          </div>
+          <div class="form-group">
+            <label>Price (₹)</label>
+            <input type="number" id="prodPrice" class="form-control" placeholder="0.00">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Qty / Unit</label>
+            <input type="text" id="prodQty" class="form-control" placeholder="1 kg / 250g">
+          </div>
+          <div class="form-group" style="display:flex; align-items:flex-end;">
+            <button class="btn btn-block" onclick="addItemToInvoice()"><i class="fa-solid fa-plus"></i> Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-file-invoice"></i> Invoice Preview</div>
+        <div id="printableBill" style="padding:15px; border:1px solid #eee; border-radius:8px;">
+          <div style="text-align:center; border-bottom:2px dashed #ccc; padding-bottom:10px; margin-bottom:10px;">
+            <h2 id="billShopTitle" style="color:var(--primary)">MY GENERAL STORE</h2>
+            <p style="font-size:12px; color:#666;">Date: <span id="billDate"></span></p>
+          </div>
+
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="billItemsBody"></tbody>
+          </table>
+
+          <div style="margin-top:15px; font-size:14px; text-align:right;">
+            <p>Subtotal: <b>₹ <span id="subTotal">0.00</span></b></p>
+            <div style="display:flex; justify-content:flex-end; align-items:center; gap:8px; margin:5px 0;">
+              <label>Discount (₹):</label>
+              <input type="number" id="discountInput" style="width:70px; padding:3px;" value="0" oninput="updateBillTotals()">
+            </div>
+            <p style="font-size:16px; color:var(--primary);">Final Total: <b>₹ <span id="finalTotal">0.00</span></b></p>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:15px;">
+          <button class="btn btn-success" style="flex:1;" onclick="downloadPDF()"><i class="fa-solid fa-download"></i> Save PDF</button>
+          <button class="btn" style="flex:1; background:#25D366;" onclick="shareWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Share</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: APK DOWNLOAD & APP INSTALL -->
+  <div class="modal" id="apkModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('apkModal')">×</span>
+      <h3><i class="fa-brands fa-android" style="color:#00b894;"></i> Download App / APK</h3>
+      
+      <div style="margin-top:15px; font-size:14px; line-height:1.6;">
+        <!-- Option 1: Direct APK File Download Button -->
+        <div style="background:#f1f2f6; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #00b894;">
+          <h4 style="color:#2d3436; margin-bottom:5px;"><i class="fa-solid fa-file-arrow-down"></i> Direct APK Download</h4>
+          <p style="font-size:12px; color:#636e72; margin-bottom:10px;">Click below to download the latest Android `.apk` package file:</p>
+          <a href="SanskritHub.apk" id="apkMainDownloadLink" download="SanskritHub.apk" class="btn btn-block btn-dark">
+            <i class="fa-brands fa-android"></i> Download SanskritHub.apk
+          </a>
+        </div>
+
+        <!-- Option 2: 1-Click Native Phone Install -->
+        <div style="background:#eef2f7; padding:15px; border-radius:8px; border-left:4px solid var(--primary);">
+          <h4 style="color:var(--primary); margin-bottom:5px;"><i class="fa-solid fa-mobile-screen"></i> Instant Install (PWA)</h4>
+          <p style="font-size:12px; color:#636e72; margin-bottom:10px;">Installs directly on Android Home screen with offline support:</p>
+          <button class="btn btn-block btn-success" id="pwaInstallBtn" onclick="triggerPwaInstall()">
+            <i class="fa-solid fa-download"></i> Install Directly on Phone
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SETTINGS -->
+  <div class="modal" id="settingsModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('settingsModal')">×</span>
+      <h3><i class="fa-solid fa-gear"></i> Settings</h3>
+      <div class="form-group" style="margin-top:15px;">
+        <label>Shop / Business Name</label>
+        <input type="text" id="settingShopName" class="form-control" value="MY GENERAL STORE" oninput="updateShopName()">
+      </div>
+      <div class="form-group">
+        <label>Custom APK Download URL (Google Drive / Server Link)</label>
+        <input type="text" id="settingApkUrl" class="form-control" placeholder="https://your-domain.com/SanskritHub.apk" oninput="updateApkUrl()">
+      </div>
+      <p style="font-size:12px; color:#666;">Changes are automatically saved on your phone.</p>
+    </div>
+  </div>
+
+  <!-- MODAL: NOTES -->
+  <div class="modal" id="notesModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('notesModal')">×</span>
+      <h3><i class="fa-solid fa-book"></i> Course Quick Notes</h3>
+      <div style="margin-top:15px; line-height:1.6; font-size:14px;">
+        <p>• <b>Lakar (Tenses):</b> Lat Lakar (Present), Lrit Lakar (Future), Lang Lakar (Past).</p>
+        <p>• <b>Vachan:</b> Ekavachan, Dvivachan, Bahuvachan.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VIDEOS -->
+  <div class="modal" id="videoModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('videoModal')">×</span>
+      <h3><i class="fa-solid fa-video"></i> AI Video Lectures</h3>
+      <div style="margin-top:15px; text-align:center;">
+        <div style="background:#000; color:#fff; padding:35px; border-radius:8px;">
+          <i class="fa-solid fa-circle-play" style="font-size:36px; color:var(--accent);"></i>
+          <p style="margin-top:10px; font-size:14px;">Animated Lesson 1 Video</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: STORYBOOK -->
+  <div class="modal" id="storyModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('storyModal')">×</span>
+      <h3><i class="fa-solid fa-book-open"></i> Storybook</h3>
+      <div style="margin-top:15px; line-height:1.6; font-size:14px;">
+        <h4 style="color:var(--primary)">1. तृषितः काकः (प्यासा कौआ)</h4>
+        <p><b>Sanskrit:</b> एकः काकः अस्ति। सः तृषितः भवति।</p>
+        <p><b>Hindi:</b> एक कौआ है। वह प्यासा है।</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PDF LIBRARY -->
+  <div class="modal" id="pdfModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('pdfModal')">×</span>
+      <h3><i class="fa-solid fa-file-pdf"></i> PDF Library</h3>
+      <div class="form-group" style="margin-top:15px;">
+        <label>Upload Custom PDF Book</label>
+        <input type="file" accept="application/pdf" class="form-control">
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // PWA Install Handler
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const pwaBtn = document.getElementById('pwaInstallBtn');
+      if (pwaBtn) pwaBtn.style.display = 'block';
+    });
+
+    function triggerPwaInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+      } else {
+        alert("App install karne ke liye Chrome Browser me 3 dots par click karein aur 'Install app' ya 'Add to Home screen' select karein.");
+      }
+    }
+
+    // Offline Service Worker
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        self.addEventListener('install', e => e.waitUntil(caches.open('app-v1').then(c => c.addAll(['./']))));
+        self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./')))));
+      `;
+      const blob = new Blob([swCode], { type: 'text/javascript' });
+      navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+    }
+
+    // Online/Offline detection
+    window.addEventListener('online', checkStatus);
+    window.addEventListener('offline', checkStatus);
+    function checkStatus() {
+      document.getElementById('offlineBadge').style.display = navigator.onLine ? 'none' : 'inline-block';
+    }
+    checkStatus();
+
+    // Sanskrit Course Data
+    const courseData = [
+      { day: 1, title: "Day 1: Swagat & Basic Pronouns", content: "<p>Pronouns:</p><ul><li><b>Aham (अहम्)</b> = Main (I)</li><li><b>Tvam (त्वम्)</b> = Tum (You)</li><li><b>Saḥ (सः)</b> = Vah (He)</li></ul>", q: "'Aham' ka arth kya hai?", opts: ["Tum", "Main", "Vah"], ans: 1 },
+      { day: 2, title: "Day 2: Daily Expressions", content: "<p>Greetings:</p><ul><li><b>Namaste (नमस्ते)</b> = Hello</li><li><b>Katham asti?</b> = Aap kaise hain?</li></ul>", q: "'Katham asti' ka matlab?", opts: ["Aap kaise hain?", "Kahan ja rahe ho?", "Namaste"], ans: 0 },
+      { day: 3, title: "Day 3: Numbers 1 to 5", content: "<p>Numbers:</p><ul><li>1 = Ekam</li><li>2 = Dve</li><li>3 = Trini</li></ul>", q: "Sanskrit mein '3'?", opts: ["Ekam", "Dve", "Trini"], ans: 2 }
+    ];
+
+    let currentDay = 0;
+    let invoiceItems = [];
+
+    window.onload = function() {
+      renderDayGrid();
+      loadDayContent(0);
+      document.getElementById('billDate').innerText = new Date().toLocaleDateString();
+      calcRupeeToGram();
+      calcGramToRupee();
+
+      // Load saved settings
+      const savedShop = localStorage.getItem('shopName');
+      if (savedShop) {
+        document.getElementById('settingShopName').value = savedShop;
+        document.getElementById('billShopTitle').innerText = savedShop;
+      }
+      const savedApk = localStorage.getItem('apkUrl');
+      if (savedApk) {
+        document.getElementById('settingApkUrl').value = savedApk;
+        document.getElementById('apkMainDownloadLink').href = savedApk;
+      }
+    };
+
+    function toggleMenu() { document.getElementById('dropdownMenu').classList.toggle('active'); }
+    function openModal(id) { document.getElementById(id).classList.add('active'); document.getElementById('dropdownMenu').classList.remove('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function renderDayGrid() {
+      const grid = document.getElementById('dayGrid');
+      grid.innerHTML = '';
+      for (let i = 1; i <= 30; i++) {
+        const chip = document.createElement('div');
+        chip.className = `day-chip ${i === (currentDay + 1) ? 'active' : ''}`;
+        chip.innerText = `Day ${i}`;
+        chip.onclick = () => {
+          document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          loadDayContent(i - 1);
+        };
+        grid.appendChild(chip);
+      }
+    }
+
+    function resetCourseProgress() {
+      if (confirm("Day 1 se course dobara shuru karein?")) {
+        currentDay = 0;
+        renderDayGrid();
+        loadDayContent(0);
+      }
+    }
+
+    function loadDayContent(idx) {
+      currentDay = idx;
+      const data = courseData[idx] || { title: `Day ${idx+1}: Advanced Grammar`, content: "<p>New lessons loading soon...</p>", q: "Is Sanskrit easy?", opts: ["Yes", "No"], ans: 0 };
+      document.getElementById('lessonTitle').innerText = data.title;
+      document.getElementById('lessonBody').innerHTML = data.content;
+      document.getElementById('lessonCard').style.display = 'block';
+      document.getElementById('quizCard').style.display = 'none';
+    }
+
+    function startQuiz() {
+      const data = courseData[currentDay] || { q: "Sample?", opts: ["A", "B"], ans: 0 };
+      document.getElementById('quizQuestion').innerText = data.q;
+      const container = document.getElementById('quizOptions');
+      container.innerHTML = '';
+      document.getElementById('quizResult').innerText = '';
+      document.getElementById('nextDayBtn').style.display = 'none';
+
+      data.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt';
+        btn.innerText = opt;
+        btn.onclick = () => checkQuiz(idx, data.ans);
+        container.appendChild(btn);
+      });
+
+      document.getElementById('lessonCard').style.display = 'none';
+      document.getElementById('quizCard').style.display = 'block';
+    }
+
+    function checkQuiz(selected, correct) {
+      document.querySelectorAll('.quiz-opt').forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === correct) btn.classList.add('correct');
+        if (idx === selected && selected !== correct) btn.classList.add('wrong');
+      });
+      const res = document.getElementById('quizResult');
+      res.innerText = (selected === correct) ? "🎉 Sahi Uttar!" : "❌ Galat Uttar.";
+      res.style.color = (selected === correct) ? "var(--success)" : "var(--danger)";
+      document.getElementById('nextDayBtn').style.display = 'block';
+    }
+
+    function nextDay() {
+      if (currentDay < 29) {
+        loadDayContent(currentDay + 1);
+        renderDayGrid();
+      }
+    }
+
+    // Billing Engine
+    function calcRupeeToGram() {
+      const rate = parseFloat(document.getElementById('calcRate1').value) || 0;
+      const budget = parseFloat(document.getElementById('calcBudget').value) || 0;
+      document.getElementById('resGram').innerText = `${rate > 0 ? ((budget / rate) * 1000).toFixed(1) : 0} Grams`;
+    }
+
+    function calcGramToRupee() {
+      const rate = parseFloat(document.getElementById('calcRate2').value) || 0;
+      const grams = parseFloat(document.getElementById('calcGrams').value) || 0;
+      document.getElementById('resRupee').innerText = `₹ ${((grams / 1000) * rate).toFixed(2)}`;
+    }
+
+    function addCalcToBill(type) {
+      if (type === 1) {
+        invoiceItems.push({ name: "Custom Item", qty: document.getElementById('resGram').innerText, price: parseFloat(document.getElementById('calcBudget').value) || 0 });
+      } else {
+        invoiceItems.push({ name: "Custom Item", qty: `${document.getElementById('calcGrams').value}g`, price: parseFloat(document.getElementById('resRupee').innerText.replace('₹ ', '')) || 0 });
+      }
+      renderInvoice();
+    }
+
+    function addItemToInvoice() {
+      const name = document.getElementById('prodName').value || "Item";
+      const price = parseFloat(document.getElementById('prodPrice').value) || 0;
+      const qty = document.getElementById('prodQty').value || "1";
+      invoiceItems.push({ name, price, qty });
+      document.getElementById('prodName').value = '';
+      document.getElementById('prodPrice').value = '';
+      document.getElementById('prodQty').value = '';
+      renderInvoice();
+    }
+
+    function renderInvoice() {
+      const tbody = document.getElementById('billItemsBody');
+      tbody.innerHTML = '';
+      let sub = 0;
+      invoiceItems.forEach((item, idx) => {
+        sub += item.price;
+        tbody.innerHTML += `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.qty}</td>
+            <td>₹ ${item.price.toFixed(2)}</td>
+            <td><button onclick="removeItem(${idx})" style="color:red; border:none; background:none; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td>
+          </tr>
+        `;
+      });
+      document.getElementById('subTotal').innerText = sub.toFixed(2);
+      updateBillTotals();
+    }
+
+    function removeItem(idx) {
+      invoiceItems.splice(idx, 1);
+      renderInvoice();
+    }
+
+    function updateBillTotals() {
+      const sub = parseFloat(document.getElementById('subTotal').innerText) || 0;
+      const disc = parseFloat(document.getElementById('discountInput').value) || 0;
+      document.getElementById('finalTotal').innerText = Math.max(0, sub - disc).toFixed(2);
+    }
+
+    function updateShopName() {
+      const name = document.getElementById('settingShopName').value;
+      document.getElementById('billShopTitle').innerText = name || "MY GENERAL STORE";
+      localStorage.setItem('shopName', name);
+    }
+
+    function updateApkUrl() {
+      const url = document.getElementById('settingApkUrl').value;
+      if (url) {
+        document.getElementById('apkMainDownloadLink').href = url;
+        localStorage.setItem('apkUrl', url);
+      }
+    }
+
+    function downloadPDF() {
+      html2pdf().from(document.getElementById('printableBill')).save('Invoice.pdf');
+    }
+
+    function shareWhatsApp() {
+      const total = document.getElementById('finalTotal').innerText;
+      const text = `Bill Summary from ${document.getElementById('billShopTitle').innerText}: Final Amount = ₹${total}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    }
+  </script>
+</body>
+</html>
