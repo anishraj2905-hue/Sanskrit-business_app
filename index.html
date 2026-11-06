@@ -8,15 +8,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <link rel="manifest" href="data:application/manifest+json,{
-    %22name%22: %22Sanskrit & Business Hub%22,
-    %22short_name%22: %22SanskritApp%22,
-    %22start_url%22: %22.%22,
-    %22display%22: %22standalone%22,
-    %22background_color%22: %22#f8f9fa%22,
-    %22theme_color%22: %22#6c5ce7%22
-  }">
-
   <style>
     :root {
       --primary: #6c5ce7;
@@ -177,7 +168,6 @@
       font-size: 12px;
     }
     .day-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
-    .day-chip.locked { opacity: 0.5; background: #e0e0e0; cursor: not-allowed; }
 
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 13px; }
@@ -456,7 +446,7 @@
       { day: 5, title: "Day 5: Colors (Varna)", content: "<p>Colors:</p><ul><li><b>Raktah</b> = Red</li><li><b>Neelah</b> = Blue</li></ul>", q: "'Raktah' ka kya arth hai?", opts: ["Blue", "Red", "Green"], ans: 1 }
     ];
 
-    let currentDay = parseInt(localStorage.getItem('currentDayUnlocked')) || 30; // Unlock all for testing
+    let currentDay = 30;
     let selectedDayIdx = 0;
     let invoiceItems = [];
 
@@ -654,3 +644,4 @@
   </script>
 </body>
 </html>
+
