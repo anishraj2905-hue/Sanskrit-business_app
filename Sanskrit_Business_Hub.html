@@ -363,7 +363,7 @@
           
           <div style="margin-top:25px; display:flex; justify-content:flex-end; text-align:center;">
             <div>
-              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAABkCAYAAAC0kL+NAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAAG1JREFUeJzt3TEOAiEQBMGZZ+995aV1u85K1tE0oZg7k7W7A6D/1j8/m74BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4rQJ8mXUvT0pY0wAAAABJRU5ErkJggg==" alt="Ankit Dubey Signature" style="max-width:140px; display:block; margin:0 auto 2px auto; font-style: italic; transform: skewX(-10deg);" />
+              <div style="font-family: 'Brush Script MT', cursive, sans-serif; font-size: 24px; font-style: italic; color: #4834d4; transform: skewX(-10deg); margin-bottom: 2px;">Ankit Dubey</div>
               <div style="border-top:1px solid #333; width:140px; padding-top:2px; font-size:11px; font-weight:bold; font-style: italic; color:#333;">Authorized Signatory</div>
             </div>
           </div>
@@ -450,11 +450,13 @@
 
     const courseData = [
       { day: 1, title: "Day 1: Swagat & Basic Pronouns", content: "<p>Pronouns:</p><ul><li><b>Aham</b> = I</li><li><b>Tvam</b> = You</li></ul>", q: "'Aham' ka arth kya hai?", opts: ["Tum", "Main", "Vah"], ans: 1 },
-      { day: 2, title: "Day 2: Daily Expressions", content: "<p>Greetings:</p><ul><li><b>Namaste</b> = Hello</li></ul>", q: "'Katham asti' ka matlab?", opts: ["Aap kaise hain?", "Kahan?", "Namaste"], ans: 0 },
-      { day: 3, title: "Day 3: Numbers 1 to 3", content: "<p>Numbers:</p><ul><li>1 = Ekam</li><li>2 = Dve</li><li>3 = Trini</li></ul>", q: "Sanskrit mein '3'?", opts: ["Ekam", "Dve", "Trini"], ans: 2 }
+      { day: 2, title: "Day 2: Daily Expressions & Greetings", content: "<p>Expressions:</p><ul><li><b>Katham asti?</b> = How are you?</li><li><b>Aham kushalmi</b> = I am fine.</li></ul>", q: "'Katham asti' ka arth kya hai?", opts: ["Aap kaise hain?", "Kahan ja rahe hain?", "Namaste"], ans: 0 },
+      { day: 3, title: "Day 3: Numbers (1 to 3)", content: "<p>Numbers:</p><ul><li>1 = Ekam</li><li>2 = Dve</li><li>3 = Trini</li></ul>", q: "Sanskrit mein '3' ko kya kehte hain?", opts: ["Ekam", "Dve", "Trini"], ans: 2 },
+      { day: 4, title: "Day 4: Family Relations", content: "<p>Relations:</p><ul><li><b>Pitah</b> = Father</li><li><b>Mata</b> = Mother</li></ul>", q: "Sanskrit mein 'Mother' ko kya kehte hain?", opts: ["Mata", "Pitah", "Bhrata"], ans: 0 },
+      { day: 5, title: "Day 5: Colors (Varna)", content: "<p>Colors:</p><ul><li><b>Raktah</b> = Red</li><li><b>Neelah</b> = Blue</li></ul>", q: "'Raktah' ka kya arth hai?", opts: ["Blue", "Red", "Green"], ans: 1 }
     ];
 
-    let currentDay = parseInt(localStorage.getItem('currentDayUnlocked')) || 0;
+    let currentDay = parseInt(localStorage.getItem('currentDayUnlocked')) || 30; // Unlock all for testing
     let selectedDayIdx = 0;
     let invoiceItems = [];
 
@@ -493,17 +495,12 @@
       grid.innerHTML = '';
       for (let i = 1; i <= 30; i++) {
         const chip = document.createElement('div');
-        const isUnlocked = (i - 1) <= currentDay;
-        chip.className = `day-chip ${i === (selectedDayIdx + 1) ? 'active' : ''} ${!isUnlocked ? 'locked' : ''}`;
+        chip.className = `day-chip ${i === (selectedDayIdx + 1) ? 'active' : ''}`;
         chip.innerText = `Day ${i}`;
         chip.onclick = function() {
-          if (isUnlocked) {
-            selectedDayIdx = i - 1;
-            renderDayGrid();
-            loadDayContent(selectedDayIdx);
-          } else {
-            alert("Pehle pichhla din pura karein!");
-          }
+          selectedDayIdx = i - 1;
+          renderDayGrid();
+          loadDayContent(selectedDayIdx);
         };
         grid.appendChild(chip);
       }
@@ -511,9 +508,7 @@
 
     function resetCourseProgress() {
       if (confirm("Reset from Day 1?")) {
-        currentDay = 0;
         selectedDayIdx = 0;
-        localStorage.removeItem('currentDayUnlocked');
         renderDayGrid();
         loadDayContent(0);
       }
@@ -521,7 +516,7 @@
 
     function loadDayContent(idx) {
       selectedDayIdx = idx;
-      const data = courseData[idx] || { title: `Day ${idx+1}: Advanced`, content: "<p>Coming soon...</p>", q: "Is Sanskrit great?", opts: ["Yes", "No"], ans: 0 };
+      const data = courseData[idx] || { title: `Day ${idx+1}: Sanskrit Practice`, content: `<p>Sanskrit Masterclass Day ${idx+1} content and vocabulary guidelines.</p>`, q: "Is Sanskrit easy?", opts: ["Yes", "No"], ans: 0 };
       document.getElementById('lessonTitle').innerText = data.title;
       document.getElementById('lessonBody').innerHTML = data.content;
       document.getElementById('lessonCard').style.display = 'block';
@@ -529,7 +524,7 @@
     }
 
     function startQuiz() {
-      const data = courseData[selectedDayIdx] || { q: "Sample?", opts: ["A", "B"], ans: 0 };
+      const data = courseData[selectedDayIdx] || { q: "Sample Question?", opts: ["A", "B"], ans: 0 };
       document.getElementById('quizQuestion').innerText = data.q;
       const container = document.getElementById('quizOptions');
       container.innerHTML = '';
@@ -556,14 +551,7 @@
       const res = document.getElementById('quizResult');
       res.innerText = (selected === correct) ? "🎉 Sahi Uttar!" : "❌ Galat Uttar.";
       res.style.color = (selected === correct) ? "var(--success)" : "var(--danger)";
-      
-      if (selected === correct) {
-        document.getElementById('nextDayBtn').style.display = 'block';
-        if (selectedDayIdx >= currentDay && currentDay < 29) {
-          currentDay = selectedDayIdx + 1;
-          localStorage.setItem('currentDayUnlocked', currentDay);
-        }
-      }
+      document.getElementById('nextDayBtn').style.display = 'block';
     }
 
     function unlockNextDay() {
@@ -571,6 +559,8 @@
         selectedDayIdx++;
         renderDayGrid();
         loadDayContent(selectedDayIdx);
+      } else {
+        alert("Aapne sabhi 30 din pure kar liye hain!");
       }
     }
 
