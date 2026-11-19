@@ -1,11 +1,31 @@
 {
-  "background_color": "#ffffff",
-  "dir": "ltr",
+  "name": "Sanskrit & Business Hub",
+  "short_name": "Sanskrit Hub",
+  "description": "Learn Sanskrit and Business in one app",
+  "start_url": ".",
+  "scope": ".",
   "display": "standalone",
-  "name": "Sanskrit&amp;Businesshub",
-  "orientation": "any",
-  "scope": "/",
-  "short_name": "Sanskritapp",
-  "start_url": "/",
-  "theme_color": "#ffffff"
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ff7b00",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
 }
